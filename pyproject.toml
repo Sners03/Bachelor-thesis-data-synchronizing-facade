@@ -1,0 +1,9 @@
+[project]
+name = "bachelor-thesis-data-synchronizing-facade"
+version = "0.1.0"
+description = "This Project provides a Flask Application for receiving and transforming asynchronous data via LoRa and providing it synchronous"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.1.2",
+]
