@@ -21,7 +21,18 @@ class SensorService(object):
     def remove_sensor(self, lora_id):
         return self._sensors.pop(lora_id)
 
+    def check_sensor_present(self, lora_id):
+        return lora_id in self._sensors.keys()
+
+    def _update_sensor_data(self, lora_id, data):
+        self._sensors[lora_id].last_value = data
+
     # todo with receive + extrapolate
     def update_sensor(self, lora_id:str, received_data:object):
-        pass
+        if not self.check_sensor_present(lora_id=lora_id):
+            self.add_sensor_by_id(lora_id=lora_id)
+            self._update_sensor_data(lora_id=lora_id, data=received_data)
+
+    def get_sensors(self):
+        return [{lora_id:self._sensors[lora_id].last_value} for lora_id in self._sensors.keys()]
 
