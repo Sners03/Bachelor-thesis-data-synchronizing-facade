@@ -29,5 +29,5 @@ uv sync
 ## run the project
 To run the project, use the following command
 ```shell
-uv run -m flask --app src.main run
+uv run -m flask --app src.main run --no-reload
 ```
