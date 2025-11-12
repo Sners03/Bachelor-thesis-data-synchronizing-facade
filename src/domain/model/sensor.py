@@ -1,5 +1,5 @@
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 import datetime
 
@@ -17,7 +17,7 @@ class Sensor:
     _last_changed_time:datetime.datetime
     expected_value_interval:datetime.timedelta
     _sensor_state:SensorState
-    _last_values_queue:deque = deque(maxlen=5)
+    _last_values_queue:deque = field(default_factory=lambda:deque(maxlen=5))
 
     def __init__(self, lora_id:str):
         """
