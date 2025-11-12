@@ -1,0 +1,13 @@
+{
+  "MQTT_BROKER_URL": "localhost",
+  "MQTT_BROKER_PORT": 1883,
+  "MQTT_USERNAME": "",
+  "MQTT_PASSWORD": "",
+  "MQTT_KEEPALIVE": 5,
+  "MQTT_TLS_ENABLED": false,
+  "TOPIC_SUBSCRIBE": ["eu868/gateway/5030354152544750/event/up"],
+  "TOPIC_PUBLISH":{
+    "NAME": "test2",
+    "RATE_S": 10
+  }
+}

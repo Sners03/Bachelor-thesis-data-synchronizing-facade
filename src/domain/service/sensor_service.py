@@ -1,7 +1,6 @@
 from typing import Dict
 from src.domain.model.sensor import Sensor
 
-
 class SensorService(object):
     _sensors:Dict[str,Sensor] = {}
 

@@ -3,6 +3,7 @@ import threading
 import time
 
 from src.application.interface.mqtt_manager import MqttManager
+from src.domain.service.config_service import ConfigService
 from src.domain.service.sensor_service import SensorService
 from src.application.interface.rest import sensor_rest_interface
 
@@ -14,9 +15,13 @@ app.config['MQTT_PASSWORD'] = ''  # set the password here if the broker demands 
 app.config['MQTT_KEEPALIVE'] = 5  # set the time interval for sending a ping to the broker to 5 seconds
 app.config['MQTT_TLS_ENABLED'] = False  # set TLS to disabled for testing purposes
 
-MqttManager.mqtt_init_app(app)
+config_service = ConfigService()
+app = config_service.init_app(app)
+
 sensor_service = SensorService()
 sensor_rest_interface.init_sensor_service(sensor_service)
+
+MqttManager.mqtt_init_app(app)
 
 app.register_blueprint(sensor_rest_interface.sensor_rest_interface)
 
@@ -25,17 +30,20 @@ def publish_message():
     msg_count = 1
     while True:
         try:
-            MqttManager.mqtt.publish("test_2", f"lol {msg_count}")
+            #print(f"{app.config['TOPIC_PUBLISH']['NAME']}-{msg_count}")
+            MqttManager.mqtt.publish(app.config["TOPIC_PUBLISH"]["NAME"], f"{msg_count}: {sensor_service.get_sensors()}\n")
             msg_count += 1
         except Exception as e:
             print(f"Error publishing message: {e}")
-        time.sleep(5)  # Publish every 5 seconds
+        time.sleep(app.config["TOPIC_PUBLISH"]["RATE_S"])  # Publish every 5 seconds
 
 
 @MqttManager.mqtt.on_connect()
 def on_connect(client, userdata, flags, rc):
     print("Connected to broker")
-    MqttManager.subscribe("test")
+    for topic in app.config["TOPIC_SUBSCRIBE"]:
+        print(f"Subscribing to topic: {topic}")
+        MqttManager.subscribe(topic)
 
 @MqttManager.mqtt.on_message()
 def on_message(client, userdata, message):
