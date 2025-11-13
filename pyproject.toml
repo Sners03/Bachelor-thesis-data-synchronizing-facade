@@ -9,4 +9,5 @@ dependencies = [
     "flask-apscheduler>=1.13.1",
     "flask-mqtt>=1.2.1",
     "jsonschema>=4.25.1",
+    "pycryptodome>=3.23.0",
 ]

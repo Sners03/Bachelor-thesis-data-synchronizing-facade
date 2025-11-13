@@ -6,6 +6,7 @@ from src.application.interface.mqtt_manager import MqttManager
 from src.domain.service.config_service import ConfigService
 from src.domain.service.sensor_service import SensorService
 from src.application.interface.rest import sensor_rest_interface
+from src.lib.lora_packet_python.LoraPacket import LoraPacket
 
 app = Flask(__name__)
 app.config['MQTT_BROKER_URL'] = 'localhost'  # use the free broker from HIVEMQ
@@ -49,7 +50,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     data = dict(
         topic=message.topic,
-        payload=message.payload.decode()
+        payload=LoraPacket.from_wire(message.payload)
     )
     sensor_service.update_sensor("test", data)
     print('Received message on topic: {topic} with payload: {payload}'.format(**data))
