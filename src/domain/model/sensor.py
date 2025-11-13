@@ -17,7 +17,7 @@ class Sensor:
     _last_changed_time:datetime.datetime
     expected_value_interval:datetime.timedelta
     _sensor_state:SensorState
-    _last_values_queue:deque = field(default_factory=lambda:deque(maxlen=5))
+    _last_values_queue:deque
 
     def __init__(self, lora_id:str):
         """
@@ -26,6 +26,7 @@ class Sensor:
         :param lora_id: a string of the LoRa Id of the sender nodes device
         """
         self.lora_id = lora_id
+        self._last_values_queue = deque(maxlen=5)
 
     @property
     def last_value(self):
