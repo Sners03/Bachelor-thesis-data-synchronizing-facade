@@ -1,6 +1,10 @@
+import struct
+
 from flask import Flask
 import threading
 import time
+
+from werkzeug.datastructures import Range
 
 from src.application.interface.mqtt_manager import MqttManager
 from src.domain.service.config_service import ConfigService
@@ -26,6 +30,13 @@ MqttManager.mqtt_init_app(app)
 
 app.register_blueprint(sensor_rest_interface.sensor_rest_interface)
 
+def map_message_hardcoded(message: bytes):
+    dev_addr = message[2:6]
+    ax = struct.unpack('f', message[11:15])
+    ay = struct.unpack('f', message[15:19])
+    az = struct.unpack('f', message[19:23])
+    return dev_addr, ax, ay, az
+
 def publish_message():
     """Publishes a message to the MQTT broker periodically."""
     msg_count = 1
@@ -50,9 +61,10 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     data = dict(
         topic=message.topic,
-        payload=LoraPacket.from_wire(message.payload)
+        payload=message.payload
     )
-    sensor_service.update_sensor("test", data)
+    mapped = map_message_hardcoded(data['payload'])
+    sensor_service.update_sensor(mapped[0], (mapped[1], mapped[2], mapped[3]))
     print('Received message on topic: {topic} with payload: {payload}'.format(**data))
 
 # Create and start the background thread
