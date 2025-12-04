@@ -26,6 +26,8 @@ app = config_service.init_app(app)
 sensor_service = SensorService()
 sensor_rest_interface.init_sensor_service(sensor_service)
 
+config_service.load_sensors(sensor_service)
+
 MqttManager.mqtt_init_app(app)
 
 app.register_blueprint(sensor_rest_interface.sensor_rest_interface)
@@ -63,8 +65,9 @@ def on_message(client, userdata, message):
         topic=message.topic,
         payload=message.payload
     )
-    mapped = map_message_hardcoded(data['payload'])
-    sensor_service.update_sensor(mapped[0], (mapped[1], mapped[2], mapped[3]))
+    #mapped = map_message_hardcoded(data['payload'])
+    #sensor_service.update_sensor(mapped[0], (mapped[1], mapped[2], mapped[3]))
+    sensor_service.update_sensor(data['payload'])
     print('Received message on topic: {topic} with payload: {payload}'.format(**data))
 
 # Create and start the background thread

@@ -1,0 +1,69 @@
+{
+  "$id": "sensor_config.schema.json",
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "description": "Array of configs of different sensors",
+  "title": "Sensor Config",
+  "type": "object",
+  "properties": {
+    "sensors": {
+      "type": "array",
+      "description": "a List of Configurations of sensors",
+      "items": {
+        "$ref": "#/$defs/sensor"
+      }
+    }
+  },
+  "$defs": {
+    "sensor": {
+      "type": "object",
+      "required": [
+        "deviceAddress",
+        "fields",
+        "samplingRate_ms"
+      ],
+      "properties": {
+        "deviceAddress": {
+          "type": "string",
+          "description": "an Address Identifying the current sensor"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["fieldName", "datatype", "start", "end"],
+            "properties": {
+              "fieldName": {
+                "type": "string",
+                "description": "name for the field that should be mapped from the byte buffer"
+              },
+              "datatype": {
+                "enum": ["int","float","double","string"],
+                "description": "The datatype onto which the bytes should be mapped"
+              },
+              "start": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "the position on the bytebuffer at which the fields data starts"
+              },
+              "end":{
+                "type": "integer",
+                "minimum": 0,
+                "description": "the position on the bytebuffer at which the fields data ends"
+              }
+            }
+          }
+        },
+        "samplingRate_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The Sampling Rate of the sensor in ms, the interval within which sensordata is expected"
+        },
+        "repeatFields": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The amount of times the fields are repeated in the buffer"
+        }
+      }
+    }
+  }
+}

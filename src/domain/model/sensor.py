@@ -11,22 +11,23 @@ class Sensor:
     """
     A Sensor Class containing
     """
-    lora_id:str
+    device_address:bytes
     _last_value:Any
     last_connected_time:datetime.datetime
     _last_changed_time:datetime.datetime
     expected_value_interval:datetime.timedelta
     _sensor_state:SensorState
     _last_values_queue:deque
+    fields = []
 
-    def __init__(self, lora_id:str):
+    def __init__(self, device_address:bytes):
         """
         creates a Sensor object from just the required lora_id
 
-        :param lora_id: a string of the LoRa Id of the sender nodes device
+        :param device_address: a string of the LoRa Id of the sender nodes device
         """
-        self.lora_id = lora_id
-        self._last_values_queue = deque(maxlen=5)
+        self.device_address = device_address
+        self._last_values_queue = deque(maxlen=20)
 
     @property
     def last_value(self):
