@@ -3,12 +3,18 @@ from typing import Dict
 from unittest import case
 
 import numpy as np
+import pandas as pd
 
 from src.domain.model.sensor import Sensor
+from src.domain.model.sensor_state import SensorState
+from src.domain.service.extrapolation_helper import ExtrapolationHelper
 
 
 class SensorService(object):
     _sensors: Dict[bytes, Sensor] = {}
+
+    def __init__(self):
+        self._extrapolation_helper = ExtrapolationHelper()
 
     @staticmethod
     def create_sensor(lora_id) -> Sensor:
@@ -22,7 +28,8 @@ class SensorService(object):
         device_address = bytes.fromhex(sensor_config["deviceAddress"].replace("\\x", ""))
         sensor = Sensor(device_address)
         sensor.fields = self.map_fields(sensor_config["fields"])
-        sensor.expected_value_interval = timedelta(milliseconds=sensor_config["samplingRate_ms"])
+        sensor.expected_value_interval = pd.Timedelta(seconds=sensor_config["samplingRate_ms"]/1000.0)
+        #sensor.expected_value_interval =  timedelta(milliseconds=sensor_config["samplingRate_ms"])
         return self.add_sensor(sensor)
 
     def map_fields(self, fields):
@@ -49,6 +56,7 @@ class SensorService(object):
     def _update_sensor_data(self, device_address, buffer):
         sensor = self._sensors[device_address]
         data = self.map_data(sensor, buffer)
+        data["quality"] = SensorState.ACTIVE
         self._sensors[device_address].last_value = data
 
     def map_data(self, sensor, buffer):
@@ -71,7 +79,7 @@ class SensorService(object):
 
 
 
-    # todo with receive + extrapolate
+    # todo with  extrapolate
     def update_sensor(self, buffer:bytes):
         device_address = buffer[2:6]
         if not self.check_sensor_present(device_address=device_address):
@@ -79,4 +87,5 @@ class SensorService(object):
         self._update_sensor_data(device_address=device_address, buffer=buffer)
 
     def get_sensors(self):
+        print(self._extrapolation_helper.synchronize_data(timedelta(minutes=5), self._sensors))
         return [{lora_id: self._sensors[lora_id].last_value} for lora_id in self._sensors.keys()]

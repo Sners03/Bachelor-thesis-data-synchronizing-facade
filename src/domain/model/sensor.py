@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 from typing import Any
 import datetime
 
+import pandas as pd
+
 from src.domain.model.sensor_state import SensorState
 
 
@@ -14,8 +16,8 @@ class Sensor:
     device_address:bytes
     _last_value:Any
     last_connected_time:datetime.datetime
-    _last_changed_time:datetime.datetime
-    expected_value_interval:datetime.timedelta
+    _last_changed_time:pd.Timestamp
+    expected_value_interval:pd.Timedelta
     _sensor_state:SensorState
     _last_values_queue:deque
     fields = []
@@ -27,7 +29,7 @@ class Sensor:
         :param device_address: a string of the LoRa Id of the sender nodes device
         """
         self.device_address = device_address
-        self._last_values_queue = deque(maxlen=20)
+        self._last_values_queue = deque(maxlen=100)
 
     @property
     def last_value(self):
@@ -35,11 +37,13 @@ class Sensor:
 
     @last_value.setter
     def last_value(self, value:Any):
+        current_time:pd.Timestamp = pd.Timestamp.now()
+        value["receive_time"] = current_time
         self._last_value = value
         # add the last value to the queue
         self._last_values_queue.append(value)
         # update last changed time
-        self._last_changed_time = datetime.datetime.now(datetime.timezone.utc)
+        self._last_changed_time = current_time
 
     @property
     def last_values(self):
