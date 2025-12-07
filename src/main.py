@@ -10,6 +10,7 @@ from src.application.interface.mqtt_manager import MqttManager
 from src.domain.service.config_service import ConfigService
 from src.domain.service.sensor_service import SensorService
 from src.application.interface.rest import sensor_rest_interface
+from src.application.interface.rest import config_rest_interface
 from src.lib.lora_packet_python.LoraPacket import LoraPacket
 
 app = Flask(__name__)
@@ -21,16 +22,20 @@ app.config['MQTT_KEEPALIVE'] = 5  # set the time interval for sending a ping to 
 app.config['MQTT_TLS_ENABLED'] = False  # set TLS to disabled for testing purposes
 
 config_service = ConfigService()
+config_rest_interface.init_config_service(config_service)
 app = config_service.init_app(app)
 
 sensor_service = SensorService()
 sensor_rest_interface.init_sensor_service(sensor_service)
+sensor_service.set_extrapolation_timespan(app.config["SYNCHRONIZATION_TIMEFRAME_S"])
+
 
 config_service.load_sensors(sensor_service)
 
 MqttManager.mqtt_init_app(app)
 
 app.register_blueprint(sensor_rest_interface.sensor_rest_interface)
+app.register_blueprint(config_rest_interface.config_rest_interface)
 
 def map_message_hardcoded(message: bytes):
     dev_addr = message[2:6]
@@ -45,7 +50,7 @@ def publish_message():
     while True:
         try:
             #print(f"{app.config['TOPIC_PUBLISH']['NAME']}-{msg_count}")
-            MqttManager.mqtt.publish(app.config["TOPIC_PUBLISH"]["NAME"], f"{msg_count}: {sensor_service.get_sensors()}\n")
+            MqttManager.mqtt.publish(app.config["TOPIC_PUBLISH"]["NAME"], f"{msg_count}: {sensor_service.get_synchronized_sensors()}\n")
             msg_count += 1
         except Exception as e:
             print(f"Error publishing message: {e}")

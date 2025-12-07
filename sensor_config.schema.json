@@ -4,6 +4,7 @@
   "description": "Array of configs of different sensors",
   "title": "Sensor Config",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "sensors": {
       "type": "array",
@@ -21,6 +22,7 @@
         "fields",
         "samplingRate_ms"
       ],
+      "additionalProperties": false,
       "properties": {
         "deviceAddress": {
           "type": "string",
@@ -31,6 +33,7 @@
           "items": {
             "type": "object",
             "required": ["fieldName", "datatype", "start", "end"],
+            "additionalProperties": false,
             "properties": {
               "fieldName": {
                 "type": "string",
@@ -57,6 +60,11 @@
           "type": "integer",
           "minimum": 0,
           "description": "The Sampling Rate of the sensor in ms, the interval within which sensordata is expected"
+        },
+        "real_datapoints_buffer_size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The Number of Datapoints of real data the system will keep of this Sensor"
         },
         "repeatFields": {
           "type": "integer",

@@ -6,6 +6,8 @@ author=Hilbert, Frank and Soler Perez Olaya, Santiago and Wollschlaeger, Martin
 
 changed for sensor model
 """
+from distutils.command.install import value
+from multiprocessing.sharedctypes import synchronized
 from typing import Dict
 
 import numpy as np
@@ -17,37 +19,38 @@ from src.domain.model.sensor import Sensor
 
 
 class ExtrapolationHelper:
-    def __init__(self, target_sampling_rate=1.0):
-        self.target_sampling_rate = target_sampling_rate
-        self.raw_data = {}
 
-    def add_raw_data(self, sensor_name, data):
-        if sensor_name not in self.raw_data:
-            self.raw_data[sensor_name] = []
-        self.raw_data[sensor_name].append(data)
-
-    def synchronize_data(self, extrapolation_timespan:timedelta, sensors: Dict[bytes, Sensor]):
+    @staticmethod
+    def synchronize_data(extrapolation_timespan:timedelta, sensors: Dict[bytes, Sensor]):
         """
         changes:
             endtime is now datetime.now
             starttime is now an extrapolation timespan
             Sensor-specific interpolation tweaks removed
             mapping from own sensor model to AAS sensor model
-            especially mapping specific field, dor multiple fields for an sensor
+            especially mapping specific field, dor multiple fields for a sensor
+            merging to more useful representation for endpoint -> pandas dataframe not language agnostic
+            replaced general sampling rate with sensor specific sampling rate
+            made method static
         :param extrapolation_timespan:
         :param sensors:
         :return:
         """
         end_time = datetime.now()
         start_time = end_time - extrapolation_timespan
-        time_vector = pd.date_range(start_time, end_time,
-                                    freq=f"{int(1000 / self.target_sampling_rate)}ms")
-        sync_df = pd.DataFrame(index=time_vector)  # sensor values
-        quality_df = pd.DataFrame(index=time_vector)  # QualityQualifier
-        method_df = pd.DataFrame(index=time_vector)  # MethodQualifier
+
+        #sync_df = pd.DataFrame(index=time_vector)  # sensor values
+        #quality_df = pd.DataFrame(index=time_vector)  # QualityQualifier
+        #method_df = pd.DataFrame(index=time_vector)  # MethodQualifier
+
+        synchronized_data = {}
 
         for device_address in sensors.keys():
+            synchronized_data[device_address] = {}
+            time_vector = pd.date_range(start_time, end_time,
+                                        freq=f"{sensors[device_address].expected_value_interval.seconds}s")
             for field in sensors[device_address].fields.keys():
+
                 field_data = [{"value":data[field], "timestamp":data["receive_time"]} for data in sensors[device_address].last_values]
 
                 df = pd.DataFrame(field_data).set_index("timestamp").sort_index()
@@ -139,9 +142,21 @@ class ExtrapolationHelper:
                         quality.loc[target_extrap_index] = "extrapolated"
                         method.loc[target_extrap_index] = "zoh"
 
-                sync_df[field] = series
-                quality_df[field] = quality
-                method_df[field] = method
-            # TODO remerge sensor data
+                    # add real Data to Dataframe
+                for data in sensors[device_address].last_values:
+                    series.loc[data["receive_time"]] = data[field]
+                    quality.loc[data["receive_time"]] = "real_data"
+                    method.loc[data["receive_time"]] = "real_data"
+                series.sort_index(inplace=True)
+                quality.sort_index(inplace=True)
+                method.sort_index(inplace=True)
 
-        return sync_df, quality_df, method_df
+                result = pd.concat([series, quality.rename("quality"), method.rename("method")], axis=1)
+                if field == 'ax':
+                    print(result)
+                synchronized_data[device_address][field] = result.to_dict("records")
+                #sync_df[field] = series
+                #quality_df[field] = quality
+                #method_df[field] = method
+
+        return synchronized_data

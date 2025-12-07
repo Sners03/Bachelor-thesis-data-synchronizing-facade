@@ -15,11 +15,11 @@ class Sensor:
     """
     device_address:bytes
     _last_value:Any
-    last_connected_time:datetime.datetime
     _last_changed_time:pd.Timestamp
     expected_value_interval:pd.Timedelta
-    _sensor_state:SensorState
+    #_sensor_state:SensorState not needed in current implementation
     _last_values_queue:deque
+    _last_values_buffer_size:int
     fields = []
 
     def __init__(self, device_address:bytes):
@@ -48,6 +48,15 @@ class Sensor:
     @property
     def last_values(self):
         return self._last_values_queue.copy()
+
+    @property
+    def last_values_buffer_size(self):
+        return self._last_values_buffer_size
+
+    @last_values_buffer_size.setter
+    def last_values_buffer_size(self, size:int):
+        self._last_values_buffer_size = size
+        self._last_values_queue = deque(self._last_values_queue, maxlen=size)
 
     @property
     def last_changed_time(self):

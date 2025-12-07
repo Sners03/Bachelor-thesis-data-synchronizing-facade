@@ -14,4 +14,4 @@ sensor_rest_interface = Blueprint('sensor_rest_interface', __name__)
 
 @sensor_rest_interface.route('/sensor', methods=['GET'])
 def get_sensors():
-    return jsonify(sensor_service.get_sensors())
+    return jsonify(sensor_service.get_synchronized_sensors())

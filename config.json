@@ -8,6 +8,7 @@
   "TOPIC_SUBSCRIBE": ["eu868/gateway/5030354152544750/event/up"],
   "TOPIC_PUBLISH":{
     "NAME": "test2",
-    "RATE_S": 10
-  }
+    "RATE_S": 20
+  },
+  "SYNCHRONIZATION_TIMEFRAME_S": 2000
 }
