@@ -1,6 +1,5 @@
 from datetime import timedelta
 from typing import Dict
-from unittest import case
 
 import numpy as np
 import pandas as pd
@@ -16,9 +15,7 @@ class SensorService(object):
     def __init__(self):
         self._extrapolation_timespan = timedelta(seconds=600)
 
-    def set_extrapolation_timespan(self, timespan_seconds: int):
-        self._extrapolation_timespan = timedelta(seconds=timespan_seconds)
-
+############# Sensor Management #################
     @staticmethod
     def create_sensor(lora_id) -> Sensor:
         return Sensor(device_address=lora_id)
@@ -26,6 +23,9 @@ class SensorService(object):
     def remove_sensor(self, device_address_str: str):
         device_address = self.get_device_adress_from_string(device_address_str)
         return self._sensors.pop(device_address)
+
+    def get_device_adress_from_string(self, device_address: str) -> bytes:
+        return bytes.fromhex(device_address.replace("\\x", ""))
 
     def check_sensor_present(self, device_address:bytes):
         return device_address in self._sensors.keys()
@@ -38,6 +38,11 @@ class SensorService(object):
         created_sensor = self.create_sensor(lora_id=lora_id)
         self._sensors[lora_id] = created_sensor
         return self._sensors[lora_id]
+
+
+###### Sensor Config ######
+    def set_extrapolation_timespan(self, timespan_seconds: int):
+        self._extrapolation_timespan = timedelta(seconds=timespan_seconds)
 
     def add_sensor_from_config(self, sensor_config: dict):
         device_address = self.get_device_adress_from_string(sensor_config["deviceAddress"])
@@ -60,9 +65,6 @@ class SensorService(object):
             return sensor_config
         except:
             raise Exception(f"sensor couldn't be updated: {sensor_config}")
-
-    def get_device_adress_from_string(self, device_address: str) -> bytes:
-        return bytes.fromhex(device_address.replace("\\x", ""))
 
     def update_sensor_from_config_field(self, device_address:str, config_field: str, config_value):
         try:
@@ -91,22 +93,23 @@ class SensorService(object):
             for field in fields
         }
 
-    def _update_sensor_data(self, device_address, buffer):
-        sensor = self._sensors[device_address]
-        data = self.map_data(sensor, buffer)
-        data["quality"] = SensorState.ACTIVE
-        self._sensors[device_address].last_value = data
-
+########### Data Update ##############
     def map_data(self, sensor, buffer):
         return_value = {}
         for field in sensor.fields:
             return_value[field] = self.map_datatype(buffer[sensor.fields[field]["start"]:sensor.fields[field]["end"]], sensor.fields[field]["datatype"])
         return return_value
 
+    def _update_sensor_data(self, device_address, buffer):
+        sensor = self._sensors[device_address]
+        data = self.map_data(sensor, buffer)
+        data["quality"] = SensorState.ACTIVE
+        self._sensors[device_address].last_value = data
+
     def map_datatype(self, buffer:bytes, datatype:str):
         match datatype:
             case "int":
-                return int(buffer)
+                return int.from_bytes(buffer)
             case "float":
                 return np.frombuffer(buffer, dtype=np.float32)[0]
             case "double":

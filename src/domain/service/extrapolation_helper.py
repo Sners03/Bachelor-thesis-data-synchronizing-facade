@@ -6,8 +6,6 @@ author=Hilbert, Frank and Soler Perez Olaya, Santiago and Wollschlaeger, Martin
 
 changed for sensor model
 """
-from distutils.command.install import value
-from multiprocessing.sharedctypes import synchronized
 from typing import Dict
 
 import numpy as np
@@ -16,12 +14,13 @@ from datetime import datetime, timedelta
 from statsmodels.tsa.arima.model import ARIMA
 
 from src.domain.model.sensor import Sensor
+from src.domain.model.synchronization_mode import SynchronizationMode
 
 
 class ExtrapolationHelper:
 
     @staticmethod
-    def synchronize_data(extrapolation_timespan:timedelta, sensors: Dict[bytes, Sensor]):
+    def synchronize_data(extrapolation_timespan:timedelta, sensors: Dict[bytes, Sensor], synchronization_mode: SynchronizationMode = SynchronizationMode.SYNCHRONIZE):
         """
         changes:
             endtime is now datetime.now
@@ -30,8 +29,10 @@ class ExtrapolationHelper:
             mapping from own sensor model to AAS sensor model
             especially mapping specific field, dor multiple fields for a sensor
             merging to more useful representation for endpoint -> pandas dataframe not language agnostic
-            replaced general sampling rate with sensor specific sampling rate
-            made method static
+            added synchronization modes
+            replaced general sampling rate with sensor specific sampling rate -> on Synchronization mode PURE_QUALITY_STABILISATION
+            refactored method static
+        :param synchronization_mode:
         :param extrapolation_timespan:
         :param sensors:
         :return:
@@ -39,16 +40,20 @@ class ExtrapolationHelper:
         end_time = datetime.now()
         start_time = end_time - extrapolation_timespan
 
-        #sync_df = pd.DataFrame(index=time_vector)  # sensor values
-        #quality_df = pd.DataFrame(index=time_vector)  # QualityQualifier
-        #method_df = pd.DataFrame(index=time_vector)  # MethodQualifier
+        if synchronization_mode == SynchronizationMode.SYNCHRONIZE:
+            time_vector = pd.date_range(start_time, end_time,
+                                        freq=f"{1}s") # TODO could be replaced with parameter in future
+            #sync_df = pd.DataFrame(index=time_vector)  # sensor values
+            #quality_df = pd.DataFrame(index=time_vector)  # QualityQualifier
+            #method_df = pd.DataFrame(index=time_vector)  # MethodQualifier
 
         synchronized_data = {}
 
         for device_address in sensors.keys():
             synchronized_data[device_address] = {}
-            time_vector = pd.date_range(start_time, end_time,
-                                        freq=f"{sensors[device_address].expected_value_interval.seconds}s")
+            if synchronization_mode != SynchronizationMode.SYNCHRONIZE:
+                time_vector = pd.date_range(start_time, end_time,
+                                            freq=f"{sensors[device_address].expected_value_interval.seconds}s")
             for field in sensors[device_address].fields.keys():
 
                 field_data = [{"value":data[field], "timestamp":data["receive_time"]} for data in sensors[device_address].last_values]
@@ -141,22 +146,22 @@ class ExtrapolationHelper:
                         series.loc[target_extrap_index] = last_val
                         quality.loc[target_extrap_index] = "extrapolated"
                         method.loc[target_extrap_index] = "zoh"
-
+                if synchronization_mode == SynchronizationMode.PURE_QUALITY_STABILISATION:
                     # add real Data to Dataframe
-                for data in sensors[device_address].last_values:
-                    series.loc[data["receive_time"]] = data[field]
-                    quality.loc[data["receive_time"]] = "real_data"
-                    method.loc[data["receive_time"]] = "real_data"
-                series.sort_index(inplace=True)
-                quality.sort_index(inplace=True)
-                method.sort_index(inplace=True)
+                    for data in sensors[device_address].last_values:
+                        series.loc[data["receive_time"]] = data[field]
+                        quality.loc[data["receive_time"]] = "real_data"
+                        method.loc[data["receive_time"]] = "real_data"
+                    series.sort_index(inplace=True)
+                    quality.sort_index(inplace=True)
+                    method.sort_index(inplace=True)
 
                 result = pd.concat([series, quality.rename("quality"), method.rename("method")], axis=1)
-                if field == 'ax':
-                    print(result)
-                synchronized_data[device_address][field] = result.to_dict("records")
+
                 #sync_df[field] = series
                 #quality_df[field] = quality
                 #method_df[field] = method
+
+                synchronized_data[device_address][field] = result.to_dict("records")
 
         return synchronized_data

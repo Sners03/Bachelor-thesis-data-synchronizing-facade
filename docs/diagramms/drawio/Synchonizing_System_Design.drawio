@@ -4,11 +4,14 @@
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-9" value="Flask Facade" style="swimlane;whiteSpace=wrap;html=1;gradientColor=none;swimlaneFillColor=default;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-9" value="Flask Synchronizing System" style="swimlane;whiteSpace=wrap;html=1;gradientColor=none;swimlaneFillColor=default;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="60" y="40" width="850" height="530" as="geometry" />
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="hTRZVKy63FIRwi90F-Fj-9" source="hTRZVKy63FIRwi90F-Fj-8" target="hTRZVKy63FIRwi90F-Fj-13" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="hTRZVKy63FIRwi90F-Fj-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="345.44000000000045" y="220" as="sourcePoint" />
+            <mxPoint x="345.69" y="310" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="hTRZVKy63FIRwi90F-Fj-38" value="update config" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-36" vertex="1" connectable="0">
           <mxGeometry x="0.34" y="1" relative="1" as="geometry">
@@ -47,14 +50,6 @@
             <mxPoint x="-4" y="-13" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" parent="hTRZVKy63FIRwi90F-Fj-9" source="hTRZVKy63FIRwi90F-Fj-13" target="hTRZVKy63FIRwi90F-Fj-8" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-35" value="get config" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-34" vertex="1" connectable="0">
-          <mxGeometry x="0.0925" y="-2" relative="1" as="geometry">
-            <mxPoint y="-11" as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="hTRZVKy63FIRwi90F-Fj-13" value="Sensor Management&lt;br&gt;Service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" parent="hTRZVKy63FIRwi90F-Fj-9" vertex="1">
           <mxGeometry x="290" y="310" width="111" height="50" as="geometry" />
         </mxCell>
@@ -71,7 +66,7 @@
             <mxPoint x="-80" y="195" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-44" value="PUT, POST, GET" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-41" vertex="1" connectable="0">
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-44" value="POST, GET" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-41" vertex="1" connectable="0">
           <mxGeometry x="0.042" y="-1" relative="1" as="geometry">
             <mxPoint y="1" as="offset" />
           </mxGeometry>
@@ -126,12 +121,12 @@
             <mxPoint x="350" y="360" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-56" value="extrapolate" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-55" vertex="1" connectable="0">
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-56" value="synchronize" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-55" vertex="1" connectable="0">
           <mxGeometry x="0.1208" y="-2" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-25" value="Extrapolation&lt;br&gt;Helper" style="html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="hTRZVKy63FIRwi90F-Fj-9" vertex="1">
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-25" value="Synchronization&lt;br&gt;Helper" style="html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="hTRZVKy63FIRwi90F-Fj-9" vertex="1">
           <mxGeometry x="291" y="450" width="110" height="50" as="geometry" />
         </mxCell>
         <mxCell id="hTRZVKy63FIRwi90F-Fj-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" parent="hTRZVKy63FIRwi90F-Fj-9" source="hTRZVKy63FIRwi90F-Fj-26" target="hTRZVKy63FIRwi90F-Fj-13" edge="1">
@@ -143,7 +138,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-64" value="update value by Id" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-60" vertex="1" connectable="0">
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-64" value="update value from bytes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-60" vertex="1" connectable="0">
           <mxGeometry x="0.0434" y="-1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
@@ -153,12 +148,12 @@
             <mxPoint x="930" y="475" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-65" value="Sensor Data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-63" vertex="1" connectable="0">
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-65" value="Lora Message Bytes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="hTRZVKy63FIRwi90F-Fj-63" vertex="1" connectable="0">
           <mxGeometry x="-0.0312" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="7" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="hTRZVKy63FIRwi90F-Fj-26" value="Sensor Data Receiver&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="hTRZVKy63FIRwi90F-Fj-9" vertex="1">
+        <mxCell id="hTRZVKy63FIRwi90F-Fj-26" value="Sensor Data MQTT Subscriber&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="hTRZVKy63FIRwi90F-Fj-9" vertex="1">
           <mxGeometry x="691" y="450" width="111" height="50" as="geometry" />
         </mxCell>
       </root>
