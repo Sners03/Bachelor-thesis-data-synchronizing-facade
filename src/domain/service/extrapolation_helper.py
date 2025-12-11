@@ -29,9 +29,9 @@ class ExtrapolationHelper:
             mapping from own sensor model to AAS sensor model
             especially mapping specific field, dor multiple fields for a sensor
             merging to more useful representation for endpoint -> pandas dataframe not language agnostic
-            replaced general sampling rate with sensor specific sampling rate
-            refactored method static
             added synchronization modes
+            replaced general sampling rate with sensor specific sampling rate -> on Synchronization mode PURE_QUALITY_STABILISATION
+            refactored method static
         :param synchronization_mode:
         :param extrapolation_timespan:
         :param sensors:
@@ -43,9 +43,9 @@ class ExtrapolationHelper:
         if synchronization_mode == SynchronizationMode.SYNCHRONIZE:
             time_vector = pd.date_range(start_time, end_time,
                                         freq=f"{1}s") # TODO could be replaced with parameter in future
-            sync_df = pd.DataFrame(index=time_vector)  # sensor values
-            quality_df = pd.DataFrame(index=time_vector)  # QualityQualifier
-            method_df = pd.DataFrame(index=time_vector)  # MethodQualifier
+            #sync_df = pd.DataFrame(index=time_vector)  # sensor values
+            #quality_df = pd.DataFrame(index=time_vector)  # QualityQualifier
+            #method_df = pd.DataFrame(index=time_vector)  # MethodQualifier
 
         synchronized_data = {}
 

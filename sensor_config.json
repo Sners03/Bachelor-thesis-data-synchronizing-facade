@@ -1,1 +1,15 @@
-{"sensors": [{"deviceAddress": "\\x5A\\x5A\\x5A\\x5A", "fields": [{"fieldName": "ax", "datatype": "float", "start": 11, "end": 15}, {"fieldName": "ay", "datatype": "float", "start": 15, "end": 19}, {"fieldName": "az", "datatype": "float", "start": 19, "end": 23}], "samplingRate_ms": 10000, "real_datapoints_buffer_size": 40}]}
+{
+  "sensors":
+  [
+    {
+      "deviceAddress": "\\x5A\\x5A\\x5A\\x5A",
+      "fields": [
+        {"fieldName": "ax", "datatype": "float", "start": 11, "end": 15},
+        {"fieldName": "ay", "datatype": "float", "start": 15, "end": 19},
+        {"fieldName": "az", "datatype": "float", "start": 19, "end": 23}
+      ],
+      "samplingRate_ms": 10000,
+      "real_datapoints_buffer_size": 40
+    }
+  ]
+}
