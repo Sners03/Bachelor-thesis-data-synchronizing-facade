@@ -50,7 +50,8 @@ class ExtrapolationHelper:
         synchronized_data = {}
 
         for device_address in sensors.keys():
-            synchronized_data[device_address] = {}
+            device_address_string = device_address.hex()
+            synchronized_data[device_address_string] = {}
             if synchronization_mode != SynchronizationMode.SYNCHRONIZE:
                 time_vector = pd.date_range(start_time, end_time,
                                             freq=f"{sensors[device_address].expected_value_interval.seconds}s")
@@ -162,6 +163,6 @@ class ExtrapolationHelper:
                 #quality_df[field] = quality
                 #method_df[field] = method
 
-                synchronized_data[device_address][field] = result.to_dict("records")
+                synchronized_data[device_address_string][field] = result.to_dict("records")
 
         return synchronized_data
